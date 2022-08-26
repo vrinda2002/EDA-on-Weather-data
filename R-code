@@ -1,0 +1,116 @@
+library(tidyselect)
+library(dplyr)
+library(ggplot2)
+
+#Attaching the dataset and viewing it
+View(weatherHistory)
+str(weatherHistory)
+colnames(weatherHistory) <- c('Date', 'Summary', 'Precipitate', 'Temp', 'Apparent_Temp', 'Humidity',
+                              'Wind_speed', 'Wind_bearing', 'Visibility', 'Loud_cover',
+                              'Pressure', 'Daily_summary')
+str(weatherHistory)
+
+#display the first 5 entries and last 5 entries of the dtaset
+head(weatherHistory)
+tail(weatherHistory)
+
+#Summary of the entire dataset
+summary(weatherHistory)
+
+#calculating the central tendencies and dispersion tendencies
+dim(weatherHistory)
+t <- weatherHistory$Temp
+at <- weatherHistory$Apparent_Temp
+h <- weatherHistory$Humidity
+mean(t)
+mean(at)
+mean(h)
+median(t)
+median(at)
+median(h)
+var(t)
+quantile(t)
+sd(t, na.rm = FALSE)
+var(at)
+quantile(at)
+sd(at, na.rm = FALSE)
+var(h)
+quantile(h)
+sd(h, na.rm = FALSE)
+
+#Correlation matrix
+round(cor(weatherHistory[c('Temp', 'Apparent_Temp', 'Humidity',
+                           'Wind_speed', 'Wind_bearing', 'Visibility', 'Loud_cover',
+                           'Pressure')]), 2)
+
+#visualizing using scatterplot
+ggplot(data = weatherHistory, aes(x = Temp, y = Humidity, color = Precipitate)) +
+  geom_point()
+
+#histogram
+H <- ggplot(data = weatherHistory, aes(x = Temp))
+H + geom_histogram(binwidth = 10)
+H + geom_histogram(binwidth = 10, aes(fill = Summary), col = "Black") + 
+ggtitle("Histogram of Different precipitate type for a given Temperature")
+
+#Statistics
+ggplot(data = weatherHistory, aes(x = Temp, y =
+                                  Humidity, col = Precipitate)) +
+  geom_point() + 
+  geom_smooth(fill = NA)
+
+#Boxplot
+ggplot(data = weatherHistory, aes(x = Temp, y =
+                                  Humidity, col = Precipitate)) +
+  geom_boxplot() +
+  geom_jitter()
+
+ggplot(data = weatherHistory, aes(x = Pressure, y =
+                                    Humidity, col = Precipitate)) +
+  geom_boxplot() +
+  geom_jitter()
+
+ggplot(data = weatherHistory, aes(x = Temp, y =
+                                    Humidity, col = Precipitate)) +
+  geom_jitter() +
+  geom_boxplot(alpha = 0.5, size = 1.20)
+
+#line plot
+plot(x = weatherHistory$Temp, y = weatherHistory$Humidity, data = weatherHistory,
+     xlab = "Temp(C)",
+     ylab = "Humidity",
+     main = "Weather History",
+     sub = "Relationship between Temperature and Humidity", 
+     col = "blue",
+     type = "b",
+     cex = 0.50, 
+     pch = 1, 
+     lty = 1, 
+     lwd = 1)
+
+#Finding missing values
+sapply(weatherHistory, function(x) sum(is.na(x)))
+
+#data Manipulation using dplyr
+library(dplyr)
+library(datasets)
+
+select(weatherHistory, Precipitate, Temp, Humidity)
+selectCom <- select(weatherHistory, Precipitate, Temp, Humidity)
+head(selectCom)
+
+#Arranging with respect to temperature
+arrangeComm <- arrange(weatherHistory, -Temp) #use - sign as prefix for printing the values in descending order
+head(arrangeComm)
+
+#Filtering with respect to temperature
+filtComm <- filter(weatherHistory, Temp > 37)
+head(filtComm)
+
+##Filtering with respect to Precipitate type
+filtComm1 <- filter(weatherHistory, Precipitate == 'snow')
+head(filtComm1)
+
+#Summarising temperature
+summarise(weatherHistory, mean(Temp))
+
